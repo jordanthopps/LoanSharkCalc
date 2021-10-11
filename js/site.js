@@ -2,9 +2,9 @@
 //Step 1 - Get User inputs - this will access the DOM and call all other functions
 function getValues() {
 
-    let loanAmount = 0
-    let term = 0
-    let interestRate = 0
+    let loanAmount = 10
+    let term = 10
+    let interestRate = 10
 
     loanAmount = document.getElementById("loanAmount").value;
 
@@ -23,15 +23,26 @@ function getValues() {
 }
 
 //Step 2 - Calculate the interest rate - this is the division by 1200 equation from the PDF
-function calcRate() {}
+function calcRate(interestRate) {
+
+    ((loanAmount * interestRate) / 1200);
+
+}
 
 //Step 3 - Calculate monthly payment - Amount times rate divided by the complicated math from the PDF Math.pow()
-function calcPayment() {}
+function calcPayment(loanAmount, calculatedRate, term) {
+
+    ((amountLoaned) * (interestRate / 1200)) / (1 - (1 + ((interestRate / 1200) ^ (termLength * -1))));
+
+}
 
 //Step 3.5 - Calculate the interest rate based on the current balance in rate from step 2
 //This function is called in Step 4, but you need to build it first
 //Calculates interest per payment
-function calcInterest() {}
+function calcInterest(interestRate) {
+    let remainingBalance = (loanAmount - payment);
+    let interestPay = (remainingBalance*interestRate)/1200
+}
 
 //Step 4 - Now that we know the rate and monthly payment we build out our payment schedule
 //This is the big function of the application - create your object in this function
