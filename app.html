@@ -68,11 +68,11 @@
                                     aria-label="Loan Amount">
                             </div>
                             <div class="col-12">
-                                Term (Months)<input type="text" id="termLength" class="form-control" placeholder="60"
+                                Term (Months)<input type="text" id="loanTerm" class="form-control" placeholder="60"
                                     aria-label="Term Length">
                             </div>
                             <div class="col-12">
-                                Interest Rate<input type="text" id="interestRate" class="form-control" placeholder="3"
+                                Interest Rate<input type="text" id="loanRate" class="form-control" placeholder="3"
                                     aria-label="email">
                             </div>
                             <div class="col-12 d-flex justify-content-end">
@@ -111,10 +111,11 @@
                                 <th>Payment</th>
                                 <th>Principal</th>
                                 <th>Interest</th>
+                                <th>Total Interest</th>
                                 <th>Balance</th>
                             </tr>
                         </thead>
-                        <tbody id="tableBody"> <!--eventBody-->
+                        <tbody id="results">
                             <!-- Content Goes Here-->
                         </tbody>
                     </table>
@@ -146,13 +147,20 @@
             </div>
         </div>
     </footer>
-    <template id="eventData-template">
+    <template id="ls-Template">
         <tr>
-            <td data-id="Month"></td> <!--event-->
-            <td data-id="Payment"></td> <!--city-->
-            <td data-id="Principal"></td> <!--state-->
-            <td data-id="Interest"></td> <!--attendance-->
-            <td data-id="Balance"></td> <!--eventData-->
+            <td></td>
+            <!--Month-->
+            <td></td>
+            <!--Payment-->
+            <td></td>
+            <!--Principal-->
+            <td></td>
+            <!--Interest-->
+            <td></td>
+            <!--Total Interest-->
+            <td></td>
+            <!--Balance-->
         </tr>
     </template>
     <!--Bootstrap JS-->
