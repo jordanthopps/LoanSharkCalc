@@ -44,10 +44,7 @@
                         <a class="nav-link active" aria-current="page" href="/code.html">The Code</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">The Repo</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" target="_blank" href="#">About</a>
+                        <a class="nav-link" href="https://github.com/jordanthopps/LoanSharkCalc" target="_blank">The Repo</a>
                     </li>
                 </ul>
             </div>
@@ -61,32 +58,167 @@
         <div class="container col-xxl-8 px-4 py-5 mt-5">
             <h1 class="border-bottom border-dark border-1">The Code</h1>
             <div class="row">
-                <div class="col-lg-8 col-sm-12">
+                <div class=" col-sm-12">
                     <pre class="line-numbers"><code class="language-js">
-                        function displayMessage() {
-                            let msg = ""
+                        //Mortgage Calculator
+                        //Step 1 - Get User Inputs
                         
-                            msg = document.getElementById("message").value;
+                        function getValues() {
+                            let loanAmount = document.getElementById("loanAmount").value;
+                            let term = document.getElementById("loanTerm").value;
+                            let interestRate = document.getElementById("loanRate").value;
+                            loanAmount = parseFloat(loanAmount);
+                            term = parseInt(term);
+                            interestRate = parseFloat(interestRate);
+                            let calculatedRate = calcRate(interestRate);
+                            let payment = calcPayment(loanAmount, calculatedRate, term);
                         
-                            alert(msg);
+                            let totalPayments = calcInterest(loanAmount, calculatedRate, term, payment);
+                        
+                            displayShark(totalPayments, payment, loanAmount);
+                        };
+                        
+                        //Step 2 - Calculate Interest Rate - this is the division by 1200 from the pdf
+                        function calcRate(interestRate) {
+                            let monthlyIR = interestRate / 1200;
+                            return monthlyIR;
+                        };
+                        
+                        //Step 3 - Calculate monthly payment - Amount times rate divided by the complicated math from the pdf Math.pow()
+                        function calcPayment(loanAmount, calculatedRate, term) {
+                            let a = Math.pow((1 + calculatedRate), -term);
+                            let b = loanAmount * calculatedRate;
+                            let monthlyPayment = (b / (1 - a));
+                            return monthlyPayment;
+                        
+                        };
+                        
+                        //Step 3.5 - Calculate the interest rate based on the current balance in rate from step 2
+                        //This function is called in Step 4, but you need to build it first
+                        //Calculates interest per payment
+                        function calcInterest(loanAmount, monthlyIR, term, monthlyPayment) {
+                            let payments = [];
+                            let totalInterest = 0
+                            let remainingBalance = loanAmount
+                            let interestPayment = 0;
+                            let principalPayment;
+                        
+                        
+                            for (i = 1; i <= term; i++) {
+                                interestPayment = remainingBalance * monthlyIR;
+                                principalPayment = monthlyPayment - interestPayment;
+                                totalInterest += (interestPayment);
+                                totalInterest = parseFloat(totalInterest);
+                                remainingBalance -= (principalPayment);
+                                remainingBalance = Math.abs(parseFloat(remainingBalance));
+                        
+                                totalPrincipal += principalPayment;
+                        
+                        
+                                payments.push({
+                                    month: i,
+                                    monthlyPayment: monthlyPayment.toFixed(2),
+                                    interestPayment: interestPayment.toFixed(2),
+                                    principalPayment: principalPayment.toFixed(2),
+                                    totalInterest: totalInterest.toFixed(2),
+                                    remainingBalance: remainingBalance.toFixed(2),
+                                    totalPrincipal: totalPrincipal
+                                });
+                        
+                            }
+                            let totalCost = loanAmount + totalInterest;
+                        
+                            // display calculated variables to proper positions while inside function
+                            // use the .toLocaleString to convert to USD format 
+                            payments.monthlyPayment = monthlyPayment.toLocaleString('en-US', {
+                                style: 'currency',
+                                currency: 'USD',
+                            });
+                        
+                            payments.totalPrincipal = loanAmount.toLocaleString('en-US', {
+                                style: 'currency',
+                                currency: 'USD',
+                            });
+                        
+                            payments.totalInterest = totalInterest.toLocaleString('en-US', {
+                                style: 'currency',
+                                currency: 'USD',
+                            });
+                        
+                            payments.totalCost = totalCost.toLocaleString('en-US', {
+                                style: 'currency',
+                                currency: 'USD',
+                            });
+                        
+                        
+                        
+                        
+                            return payments;
                         }
                         
-                        function displayMessage2() {
-                            let msg = "";
+                        //Step 4 - Now that we know the rate and monthly payment we build our payment schedule - principal amount should increase while interest amount should decrease ****** This is the big function of the the application **** - create object in this functon
+                        //let obj = {month:, payment:, principal:, interest:, totalInterest:, balance:}
+                        // function calcPaymentSchedule(loanAmount, monthlyIR, term, monthlyPayment){
+                        //     let payments = []; 
                         
-                            msg = document.getElementById("message").value;
+                        //     for( i = 1; i<=term; i++){
+                        //         calcInterest(loanAmount, monthlyIR, term, monthlyPayment);
+                        //         payments.push({month: i, monthlyPayment: monthlyPayment, interestPayment: interestPayment});
+                        //     }
                         
-                            Swal.fire(msg);
                         
+                        //     return payments;
+                        // };
+                        
+                        //Step 5 - Display data in table using template
+                        //Use the template structure from FizzBuzz to output your data
+                        function displayShark(payments, monthlyPayment, loanAmount) {
+                            //Generate table of values
+                            let tmPayment = document.getElementById("monthlyPayment");
+                            tmPayment.innerHTML = `${monthlyPayment.toFixed(2)}`;
+                            let totPrincipal = document.getElementById("totalPrincipal");
+                            totPrincipal.innerHTML = `${parseFloat(loanAmount)}`;
+                            let totInterest = document.getElementById("totalInterest");
+                            totInterest.innerHTML = `${payments.totalInterest}`;
+                            let totCost = document.getElementById("totalCost");
+                            totCost.innerHTML = `${payments.totalCost}`;
+                        
+                            let tableBody = document.getElementById("results");
+                        
+                            //get the template to make the table
+                            let rowTemplate = document.getElementById("ls-Template");
+                        
+                            //clear tablebody results
+                        
+                            tableBody.innerHTML = "";
+                        
+                            for (let i = 0; i < payments.length; i++) {
+                                const tableRow = document.importNode(rowTemplate.content, true);
+                        
+                                let rowCols = tableRow.querySelectorAll("td");
+                                //This is one table cd <td> the first line adds a class for CSS, the second line adds the text
+                        
+                                rowCols[0].innerHTML = `${payments[i].month}`;
+                                rowCols[1].innerHTML = `${payments[i].monthlyPayment}`;
+                                rowCols[2].innerHTML = `${payments[i].principalPayment}`;
+                                rowCols[3].innerHTML = `${payments[i].interestPayment}`;
+                                rowCols[4].innerHTML = `${payments[i].totalInterest}`;
+                                rowCols[5].innerHTML = `${payments[i].remainingBalance}`;
+                        
+                        
+                        
+                                tableBody.appendChild(tableRow);
+                        
+                            }
                         }
                     </code>
                     </pre>
                 </div>
-                <div class="col-lg-4 col-sm-12">
+                <!-- <div class="col-lg-4 col-sm-12">
                     <p>The code is structured in one function.</p>
                     <h5>getValues</h5>
                     <p>Prints out your message!</p>
-                </div>
+                </div> -->
             </div>
         </div>
     </main>
@@ -98,7 +230,7 @@
                 <div
                     class="col d-flex order-last order-lg-first align-items-center justify-content-center justify-content-lg-start">
                     <div>
-                        <span class="text-muted">&copy2021</span> Jordan Hopps | jordanthopps@outlook.com
+                        <span class="text-muted">&copy2021</span> Jordan Hopps | dev.jordanhopps@gmail.com
                     </div>
                 </div>
                 <div class="col d-flex align-items-center justify-content-center justify-content-lg-center">
@@ -108,7 +240,6 @@
                     <div class="row">
                         <div class="col social"><a href="#"><i class="fab fa-linkedin fa-2x"></i></a></div>
                         <div class="col social"><a href="#"><i class="fab fa-github fa-2x"></i></a></div>
-                        <div class="col social"><a href="#"><i class="fab fa-twitter fa-2x"></i></a></div>
                     </div>
                 </div>
             </div>
